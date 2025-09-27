@@ -1,0 +1,20 @@
+Labs com interface tunnel de logical system
+
+Junos - versão 18.4R3-S5.4 (pois tem licença trial)
+
+set logical-systems LS3 interfaces lt-0/0/0 unit 1
+set interfaces lt-0/0/0 flexible-vlan-tagging
+set interfaces lt-0/0/0 unit 0 encapsulation ethernet
+set interfaces lt-0/0/0 unit 0 peer-unit 1
+set interfaces lt-0/0/0 unit 0 family inet address 10.0.0.1/30
+set interfaces lt-0/0/0 unit 0 family inet6 address 2000:111:0:15::1/64
+set interfaces lt-0/0/0 unit 1 encapsulation ethernet
+set interfaces lt-0/0/0 unit 1 peer-unit 0
+set interfaces lt-0/0/0 unit 1 family inet address 10.0.0.2/30
+set interfaces lt-0/0/0 unit 1 family inet6 address 2000:111:0:15::2/64
+
+
+set chassis fpc 0 pic 0 tunnel-services
+set chassis fpc 0 lite-mode
+
+depois reboota para aparecer as interfaces lt- (request system reboot)
