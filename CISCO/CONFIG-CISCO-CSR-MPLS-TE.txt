@@ -37,9 +37,14 @@ ip explicit-path name PE1-VIA-P4 enable
  index 30 next-address 10.127.13.1
 
 
-
 pseudowire-class VPWS-v1333-CLIENTE
  encapsulation mpls
  control-word
- preferred-path interface Tunnel17 
+ preferred-path interface Tunnel15
+!
+
+pseudowire-class VPLS-v10-CLIENTE
+ encapsulation mpls
+ control-word
+ preferred-path interface Tunnel15
 !
