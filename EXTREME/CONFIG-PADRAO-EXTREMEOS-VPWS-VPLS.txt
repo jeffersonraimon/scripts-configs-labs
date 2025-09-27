@@ -1,0 +1,17 @@
+VPWS ##############
+
+disable igmp snooping vlan v100-MK
+
+create l2vpn vpws MK5-6 fec-id-type pseudo-wire 100
+configure l2vpn vpws MK5-6 add service vlan v100-MK
+configure l2vpn vpws MK5-6 add peer 10.4.4.4 
+
+
+VPLS #############
+
+disable igmp snooping vlan MKS
+
+create l2vpn vpls MK-VPLS fec-id-type pseudo-wire 200
+configure l2vpn vpls MK-VPLS add service vlan MKS
+configure l2vpn vpls MK-VPLS add peer 10.3.3.3
+configure l2vpn vpls MK-VPLS add peer 10.4.4.4 

@@ -1,0 +1,22 @@
+create vlan "v100"
+configure vlan v100 tag 100
+configure vlan v100 add ports 1,2 tagged 
+
+create vlan "v200"
+configure vlan v200 tag 200
+configure vlan v200 add ports 1,2 tagged 
+
+create vlan "EAPS-CONTROL"
+configure vlan EAPS-CONTROL tag 4000
+configure vlan EAPS-CONTROL add ports 1,2 tagged 
+
+enable eaps
+configure eaps fast-convergence on
+create eaps EAPS-DOMAIN
+configure eaps EAPS-DOMAIN mode master
+configure eaps EAPS-DOMAIN primary port 1
+configure eaps EAPS-DOMAIN secondary port 2
+enable eaps EAPS-DOMAIN
+configure eaps EAPS-DOMAIN add protected vlan v100
+configure eaps EAPS-DOMAIN add protected vlan v200
+configure eaps EAPS-DOMAIN add control vlan EAPS-CONTROL
