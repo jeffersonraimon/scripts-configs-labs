@@ -1,0 +1,103 @@
+hostname SW1
+!
+no ip domain lookup
+ipv6 unicast-routing
+!
+mpls label range 100 199
+mpls traffic-eng tunnels
+!
+!
+vlan 1012
+ name PTP-SW1-SW2
+!
+vlan 1013
+ name PTP-SW1-SW3
+!
+interface Loopback0
+ ip address 10.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FD10:1:1::1/128
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+router ospfv3 1
+ router-id 10.1.1.1
+ bfd all-interfaces
+ !
+ address-family ipv6 unicast
+  passive-interface Loopback0
+ exit-address-family
+!
+router ospf 1
+ router-id 10.1.1.1
+ passive-interface Loopback0
+ bfd all-interfaces
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng area 0
+!
+mpls ldp router-id Loopback0
+!
+interface GigabitEthernet0/0
+ switchport trunk allowed vlan 1012
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ mtu 9216
+!
+interface GigabitEthernet0/1
+ switchport trunk allowed vlan 1013
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ mtu 9216
+!
+interface Vlan1012
+no shutdown
+ mtu 9216
+ ip address 10.127.12.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ mpls ip
+ip rsvp bandwidth 5000
+!
+interface Vlan1013
+no shutdown
+ mtu 9216
+ ip address 10.127.13.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ mpls ip
+ip rsvp bandwidth 5000
+!
+
+PE L3 ##########
+
+
+interface GigabitEthernet0/1
+ switchport mode access
+ switchport access vlan 1111
+ mtu 9216
+!
+
+interface Vlan1111
+no shutdown
+ ip address 10.0.0.1 255.255.255.0
+ ip ospf 1 area 0
+ ipv6 address 2001:db8:10::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+
+  router ospfv3 1
+ address-family ipv6 unicast
+ passive-interface Vlan1111
+ exit-address-family
+!
+router ospf 1
+ passive-interface Vlan1111
+!
