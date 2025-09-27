@@ -1,0 +1,35 @@
+LADO A #########
+
+interface Tunnel15
+ ip unnumbered Loopback0
+ mpls ip
+ tunnel mode mpls traffic-eng
+ tunnel destination 10.5.5.5
+ tunnel mpls traffic-eng autoroute announce
+ tunnel mpls traffic-eng priority 7 7
+ tunnel mpls traffic-eng bandwidth 5000
+ tunnel mpls traffic-eng path-option 1 explicit name PE5-VIA-P3
+!
+
+ip explicit-path name PE5-VIA-P3 enable
+ index 10 next-address 10.127.13.2
+ index 20 next-address 10.127.34.2
+ index 30 next-address 10.127.45.2
+
+LADO B ########
+
+interface Tunnel15
+ ip unnumbered Loopback0
+ mpls ip
+ tunnel mode mpls traffic-eng
+ tunnel destination 10.1.1.1
+ tunnel mpls traffic-eng autoroute announce
+ tunnel mpls traffic-eng priority 7 7
+ tunnel mpls traffic-eng bandwidth 5000
+ tunnel mpls traffic-eng path-option 1 explicit name PE1-VIA-P4
+!
+
+ip explicit-path name PE1-VIA-P4 enable
+ index 10 next-address 10.127.45.1
+ index 20 next-address 10.127.34.1
+ index 30 next-address 10.127.13.1
