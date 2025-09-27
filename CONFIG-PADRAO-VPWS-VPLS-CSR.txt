@@ -1,0 +1,73 @@
+PEER REMOTO
+
+mpls ldp neighbor 10.2.2.2 targeted ldp
+
+VPWS ###################
+
+pseudowire-class VPWS-v10-CLIENTE
+ encapsulation mpls
+ control-word
+
+VLAN TAGGED
+
+interface GigabitEthernet2
+ service instance 1 ethernet
+  encapsulation default
+ !
+!
+interface GigabitEthernet2.10
+ encapsulation dot1Q 10
+ xconnect 10.2.2.2 10 pw-class VPWS-v10-CLIENTE
+  mtu 1500
+!
+
+VLAN UNTAGGED
+
+interface GigabitEthernet2
+ service instance 1 ethernet
+  encapsulation default
+  xconnect 10.2.2.2 10 pw-class VPWS-v10-CLIENTE
+ !
+
+
+VPLS ##################
+
+pseudowire-class VPLS-v10-CLIENTE
+ encapsulation mpls
+ control-word
+
+l2 vfi VPLS-v10-CLIENTE manual
+ vpn id 10
+ bridge-domain 10
+ mtu 9180
+ neighbor 10.2.2.2 10 pw-class VPLS-v10-CLIENTE
+
+EXTRA: HUB-AND-SPOKE
+
+l2 vfi VPLS-v100-POP manual
+ vpn id 100
+ bridge-domain 100
+ mtu 9180
+ neighbor 10.2.2.2 10 pw-class VPLS-v100-POP no-split-horizon
+ neighbor 10.3.3.3 10 pw-class VPLS-v100-POP no-split-horizon
+
+
+VLAN TAGGED
+
+interface GigabitEthernet2
+ service instance 1 ethernet
+  encapsulation dot1q 10
+  bridge-domain 10
+ !
+
+VLAN UNTAGGED
+
+interface GigabitEthernet2
+ service instance 1 ethernet
+  encapsulation default
+  rewrite ingress tag push dot1q 10
+  bridge-domain 10
+ !
+
+
+
