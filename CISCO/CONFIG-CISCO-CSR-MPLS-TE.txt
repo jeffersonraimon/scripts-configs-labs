@@ -9,6 +9,7 @@ interface Tunnel15
  tunnel mpls traffic-eng priority 7 7
  tunnel mpls traffic-eng bandwidth 5000
  tunnel mpls traffic-eng path-option 1 explicit name PE5-VIA-P3
+ tunnel mpls traffic-eng fast-reroute
 !
 
 ip explicit-path name PE5-VIA-P3 enable
@@ -27,9 +28,18 @@ interface Tunnel15
  tunnel mpls traffic-eng priority 7 7
  tunnel mpls traffic-eng bandwidth 5000
  tunnel mpls traffic-eng path-option 1 explicit name PE1-VIA-P4
+ tunnel mpls traffic-eng fast-reroute
 !
 
 ip explicit-path name PE1-VIA-P4 enable
  index 10 next-address 10.127.45.1
  index 20 next-address 10.127.34.1
  index 30 next-address 10.127.13.1
+
+
+
+pseudowire-class VPWS-v1333-CLIENTE
+ encapsulation mpls
+ control-word
+ preferred-path interface Tunnel17 
+!
