@@ -1,0 +1,77 @@
+#IMAGEM: csr1000vng-universalk9.17.03
+
+hostname RT1
+!
+no ip domain lookup
+ipv6 unicast-routing
+!
+mpls label range 100 199
+mpls traffic-eng tunnels
+!
+interface Loopback0
+ ip address 10.1.1.1 255.255.255.255
+ ip ospf 1 area 0
+ ipv6 address FD10:1:1::1/128
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+router ospfv3 1
+ router-id 10.1.1.1
+ bfd all-interfaces
+ !
+ address-family ipv6 unicast
+  passive-interface Loopback0
+ exit-address-family
+!
+router ospf 1
+ capability opaque
+ router-id 10.1.1.1
+ passive-interface Loopback0
+ bfd all-interfaces
+ mpls ldp sync
+ mpls ldp autoconfig
+ mpls traffic-eng router-id Loopback0
+ mpls traffic-eng area 0
+!
+mpls ldp router-id Loopback0
+!
+interface GigabitEthernet1
+ no service instance 1 ethernet
+ mtu 9216
+ ip address 10.127.12.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ ip rsvp bandwidth 5000
+ mpls traffic-eng tunnels
+!
+interface GigabitEthernet2
+ no service instance 1 ethernet
+ mtu 9216
+ ip address 10.127.13.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ ip rsvp bandwidth 5000
+ mpls traffic-eng tunnels
+!
+interface GigabitEthernet3
+ no service instance 1 ethernet
+ mtu 9216
+ ip address 10.127.14.1 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+ ipv6 address autoconfig
+ ipv6 enable
+ ipv6 ospf 1 area 0
+ ipv6 ospf network point-to-point
+ ip rsvp bandwidth 5000
+ mpls traffic-eng tunnels
+!
+
