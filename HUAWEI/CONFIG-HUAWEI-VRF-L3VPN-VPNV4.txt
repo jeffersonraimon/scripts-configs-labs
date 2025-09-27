@@ -1,0 +1,31 @@
+ip vpn-instance CLIENTE-A
+ ipv4-family
+  route-distinguisher 100:1
+  vpn-target 100:1 export-extcommunity
+  vpn-target 100:1 import-extcommunity
+#
+ip vpn-instance CLIENTE-B
+ ipv4-family
+  route-distinguisher 200:1
+  vpn-target 200:1 export-extcommunity
+  vpn-target 200:1 import-extcommunity
+#
+interface GigabitEthernet0/0/3
+ ip binding vpn-instance CLIENTE-A
+ ip address 10.1.78.7 255.255.255.240
+#
+
+bgp 65010
+ #
+ ipv4-family unicast
+  peer 10.127.3.3 advertise-community
+  peer 10.127.3.3 advertise-ext-community
+ #
+ ipv4-family vpnv4
+  policy vpn-target
+  peer 10.127.3.3 enable
+  peer 10.127.3.3 advertise-community
+ #
+ ipv4-family vpn-instance CLIENTE-A
+  peer 10.1.78.8 as-number 65020
+ #

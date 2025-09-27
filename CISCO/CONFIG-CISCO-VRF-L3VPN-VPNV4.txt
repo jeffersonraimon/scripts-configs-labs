@@ -1,0 +1,22 @@
+vrf definition CLIENTE-A
+ rd 100:1
+ !
+ address-family ipv4
+  route-target export 100:1
+  route-target import 100:1
+ exit-address-family
+!
+interface GigabitEthernet1
+ vrf forwarding CLIENTE-A
+ ip address 10.1.13.3 255.255.255.240
+
+ router bgp 65100
+  address-family vpnv4
+  neighbor 10.127.7.7 activate
+  neighbor 10.127.7.7 send-community both
+
+address-family ipv4 vrf CLIENTE-A
+  neighbor 10.1.13.1 remote-as 65020
+  neighbor 10.1.13.1 activate
+
+
