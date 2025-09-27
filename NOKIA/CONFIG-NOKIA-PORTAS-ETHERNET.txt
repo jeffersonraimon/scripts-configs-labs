@@ -1,0 +1,14 @@
+Nokia (TimOS v12)
+
+Habilitar portas ethernet
+
+show card
+
+configure card 1 card-type XXXXXXX
+
+show mda
+
+configure card 1 mda 1 mda-type XXXXXXX
+
+Validar:
+show port
