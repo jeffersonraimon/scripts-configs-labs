@@ -1,0 +1,10 @@
+Labs com PPPoE/IPOE
+
+Junos - versão 18.4R3-S5.4 (pois tem licença trial)
+
+set system configuration-database max-db-size 314572800
+set chassis fpc 0 pic 0 tunnel-services
+set chassis network-services enhanced-ip
+set system services subscriber-management enable
+
+depois reboot
