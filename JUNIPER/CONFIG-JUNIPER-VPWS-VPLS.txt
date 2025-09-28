@@ -49,3 +49,21 @@ set routing-instances PE2 protocols vpls no-tunnel-services
 set routing-instances PE2 protocols vpls vpls-id 1500
 set routing-instances PE2 protocols vpls neighbor 10.2.2.2
 
+VLAN UNTAGGED
+
+set interfaces ge-0/0/4 encapsulation ethernet-vpls
+set interfaces ge-0/0/4 unit 0 input-vlan-map push
+set interfaces ge-0/0/4 unit 0 input-vlan-map tag-protocol-id 0x8100
+set interfaces ge-0/0/4 unit 0 input-vlan-map vlan-id 1500
+set interfaces ge-0/0/4 unit 0 output-vlan-map pop
+set interfaces ge-0/0/4 unit 0 family vpls
+
+set routing-instances PE2 instance-type vpls
+set routing-instances PE2 interface ge-0/0/4.0
+set routing-instances PE2 protocols vpls encapsulation-type ethernet
+set routing-instances PE2 protocols vpls control-word
+set routing-instances PE2 protocols vpls no-tunnel-services
+set routing-instances PE2 protocols vpls vpls-id 1501
+set routing-instances PE2 protocols vpls neighbor 10.2.2.2
+
+
