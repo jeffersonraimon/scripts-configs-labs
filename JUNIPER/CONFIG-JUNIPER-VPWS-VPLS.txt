@@ -33,3 +33,19 @@ set protocols l2circuit neighbor 10.2.2.2 interface ge-0/0/2.0 pseudowire-status
 
 VPLS ###############
 
+VLAN TAGGED
+
+set interfaces ge-0/0/4 vlan-tagging
+set interfaces ge-0/0/4 encapsulation vlan-vpls
+set interfaces ge-0/0/4 unit 0 encapsulation vlan-vpls
+set interfaces ge-0/0/4 unit 0 vlan-id 1500
+set interfaces ge-0/0/4 unit 0 family vpls
+
+set routing-instances PE2 instance-type vpls
+set routing-instances PE2 vlan-id 1500
+set routing-instances PE2 interface ge-0/0/4.0
+set routing-instances PE2 protocols vpls control-word
+set routing-instances PE2 protocols vpls no-tunnel-services
+set routing-instances PE2 protocols vpls vpls-id 1501
+set routing-instances PE2 protocols vpls neighbor 10.2.2.2
+
