@@ -1,0 +1,9 @@
+set vlans Servers vlan-id 10
+set interfaces xe-0/0/1 unit 0 family ethernet-switching interface-mode trunk
+set interfaces xe-0/0/1 unit 0 family ethernet-switching vlan members Servers
+
+set interfaces xe-0/0/2 unit 0 family ethernet-switching interface-mode access
+set interfaces xe-0/0/2 unit 0 family ethernet-switching vlan members Servers
+
+set interfaces irb.10 family inet address 10.1.10.1/24  
+set vlans Server l3-interface irb.10  
