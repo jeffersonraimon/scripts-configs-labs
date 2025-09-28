@@ -41,5 +41,5 @@ set protocols rsvp interface ge-0/0/0.0
 set protocols rsvp interface ge-0/0/1.0
 set protocols mpls interface lo0.0
 set protocols mpls interface ge-0/0/0.0
-set protocols rsvp interface ge-0/0/1.0
+set protocols mpls interface ge-0/0/1.0
 set protocols mpls label-range static-label-range 100 199
