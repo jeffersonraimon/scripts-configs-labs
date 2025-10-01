@@ -1,3 +1,5 @@
+undo autoconfig enable
+#
 sysname RT1
 #
 bfd
