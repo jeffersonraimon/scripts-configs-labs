@@ -1,0 +1,55 @@
+LADO A #################
+
+explicit-path PE5-VIA-P3
+ next hop 10.127.13.2
+ next hop 10.127.34.2
+ next hop 10.127.45.2
+#
+
+interface Tunnel15
+ ip address unnumbered interface LoopBack0
+ tunnel-protocol mpls te
+ destination 10.5.5.5
+ mpls te record-route
+ mpls te backup ordinary best-effort
+ mpls te backup hot-standby mode revertive wtr 15
+ mpls te reserved-for-binding
+ mpls te tunnel-id 15
+ mpls te path explicit-path PE5-VIA-P3
+#
+
+pw-template PE5
+ peer-address 10.5.5.5
+ control-word
+ tnl-policy PE5-VIA-P3
+#
+
+>reset pw pw-template PE5
+
+LADO B #####################
+
+explicit-path PE1-VIA-P4
+ next hop 10.127.45.1
+ next hop 10.127.34.1
+ next hop 10.127.13.1
+#
+
+interface Tunnel15
+ ip address unnumbered interface LoopBack0
+ tunnel-protocol mpls te
+ destination 10.1.1.1
+ mpls te record-route
+ mpls te backup ordinary best-effort
+ mpls te backup hot-standby mode revertive wtr 15
+ mpls te reserved-for-binding
+ mpls te tunnel-id 15
+ mpls te path explicit-path PE1-VIA-P4
+#
+
+pw-template PE1
+ peer-address 10.1.1.1
+ control-word
+ tnl-policy PE1-VIA-P4
+#
+
+>reset pw pw-template PE1
