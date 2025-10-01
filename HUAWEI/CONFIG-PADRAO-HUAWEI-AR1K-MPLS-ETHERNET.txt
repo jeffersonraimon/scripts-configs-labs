@@ -1,0 +1,55 @@
+sysname RT1
+#
+bfd
+#
+ipv6
+#
+mpls lsr-id 10.1.1.1
+#
+mpls
+ mpls te
+ mpls rsvp-te
+ mpls rsvp-te bfd all-interfaces enable
+ mpls bfd enable
+#
+mpls l2vpn
+#
+mpls ldp
+#
+ospfv3 1
+ router-id 10.1.1.1
+ bfd all-interfaces enable
+ area 0.0.0.0
+#
+ospf 1 router-id 10.1.1.1
+ bfd all-interfaces enable
+ opaque-capability enable
+ area 0.0.0.0
+  mpls-te enable
+#
+interface LoopBack0
+ ipv6 enable
+ ip address 10.1.1.1 255.255.255.255
+ ipv6 address FD10:1:1::1/128
+ ospfv3 1 area 0.0.0.0
+ ospf enable 1 area 0.0.0.0
+#
+interface NULL0
+#
+interface GigabitEthernet0/0/0
+ mtu 9000
+ undo shutdown
+ ipv6 enable
+ ip address 10.127.12.1 255.255.255.252
+ ipv6 address auto link-local
+ ospfv3 1 area 0.0.0.0
+ ospfv3 network-type p2p
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+ mpls
+ mpls mtu 9000
+ mpls te
+ mpls rsvp-te
+ mpls ldp
+ undo ipv6 address auto dhcp
+#
