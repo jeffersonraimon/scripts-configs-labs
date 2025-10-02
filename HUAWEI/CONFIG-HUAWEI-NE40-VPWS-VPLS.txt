@@ -1,0 +1,23 @@
+pw-template PE1
+ peer-address 10.1.1.1
+ control-word
+#
+
+mpls ldp remote-peer PE1
+ remote-ip 10.1.1.1
+#
+
+VPWS ################
+
+VLAN TAGGED
+
+interface Ethernet1/0/3.1200
+ vlan-type dot1q 1200
+ mpls l2vc pw-template PE1 1200
+#
+
+VLAN UNTAGGED
+
+interface Ethernet1/0/3
+ mpls l2vc pw-template PE1 100
+
