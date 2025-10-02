@@ -53,3 +53,14 @@ pw-template PE1
 #
 
 >reset pw pw-template PE1
+
+
+#############
+
+vsi PE-1 static
+ pwsignal ldp
+  vsi-id 14
+  control-word enable
+  peer 10.1.1.1
+  tnl-policy PE4-VIA-P2
+#

@@ -21,3 +21,24 @@ VLAN UNTAGGED
 interface Ethernet1/0/3
  mpls l2vc pw-template PE1 100
 
+VPLS ###############
+
+VLAN TAGGED
+
+vsi PE-4 static
+ pwsignal ldp
+  vsi-id 14
+  control-word enable
+  peer 10.4.4.4
+#
+
+interface Ethernet1/0/4.1200
+ vlan-type dot1q 1200
+ l2 binding vsi PE-4
+#
+
+VLAN UNTAGGED
+
+interface Ethernet1/0/4
+ l2 binding vsi PE-4
+#
