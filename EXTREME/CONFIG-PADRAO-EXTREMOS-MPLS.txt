@@ -1,0 +1,31 @@
+configure vlan default delete ports all
+
+create vlan "ptp-sw1-2"
+configure vlan ptp-sw1-2 tag 12
+configure vlan ptp-sw1-2 add ports 1,2 tagged 
+
+configure vlan ptp-sw1-2 ipaddress 10.0.12.1 255.255.255.252
+enable ipforwarding vlan ptp-sw1-2 
+
+create vlan "loopback"
+configure vlan loopback tag 1000
+enable loopback-mode vlan loopback
+
+configure vlan loopback ipaddress 10.1.1.1 255.255.255.255
+enable ipforwarding vlan loopback
+
+configure ospf routerid 10.1.1.1
+enable ospf
+configure ospf add vlan loopback area 0.0.0.0 
+configure ospf add vlan ptp-sw1-2 area 0.0.0.0 
+
+debug epm enable trial-license 
+
+configure mpls add vlan "loopback"
+configure mpls add vlan "ptp-sw1-2"
+enable mpls vlan "ptp-sw1-2"
+enable mpls ldp vlan "ptp-sw1-2"
+
+configure mpls lsr-id 10.1.1.1
+enable mpls protocol ldp
+enable mpls
