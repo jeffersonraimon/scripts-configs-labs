@@ -1,0 +1,99 @@
+
+hostname DM-4380-LAB
+
+interface loopback 0
+ ipv4 address 10.127.1.13/32
+ ipv6 enable
+ ipv6 address fd00:1010:2000::13/128
+!
+
+interface hundred-gigabit-ethernet 1/1/1
+ description PTP-SW01
+ no shutdown
+ speed 100G
+!
+
+dot1q
+ vlan 245
+ name PTP-SW01
+!
+interface hundred-gigabit-ethernet-1/1/1
+!
+
+interface l3 PTP-SW01
+ lower-layer-if vlan 245
+ ipv4 address 10.127.4.106/30
+ ipv6 enable
+ ipv6 address fd00:1010:2fff:9:13::2/126
+!
+
+interface hundred-gigabit-ethernet 1/1/2
+ description PTP-SW02
+ no shutdown
+ speed 100G
+!
+
+dot1q
+ vlan 246
+ name PTP-SW02
+!
+interface hundred-gigabit-ethernet-1/1/2
+!
+
+interface l3 PTP-SW02
+ lower-layer-if vlan 246
+ ipv4 address 10.127.4.210/30
+ ipv6 enable
+ ipv6 address fd00:1010:2fff:13:19::1/126
+!
+
+mpls ldp
+ lsr-id loopback-0
+  interface l3-PTP-SW01
+ !
+  interface l3-PTP-SW02
+ !
+!
+
+mpls rsvp
+ refresh interval 1000
+ refresh retry 2
+ interface l3-PTP-SW01
+ !
+ interface l3-PTP-SW02
+ !
+!
+
+router ospf 1 vrf global
+ router-id 10.127.1.13
+ mpls-te router-id loopback-0
+ area 0
+  interface l3-PTP-SW01
+   bfd
+   session-type desired
+   !
+   network-type point-to-point
+  !
+  interface l3-PTP-SW02
+   bfd
+   session-type desired
+   !
+   network-type point-to-point
+  !
+  interface loopback-0
+  !
+ !
+!
+router ospfv3 1
+ router-id 10.127.1.13
+ area 0
+  interface l3-PTP-SW01
+   network-type point-to-point
+  !
+  interface l3-PTP-SW02
+   network-type point-to-point
+  !
+  interface loopback-0
+  !
+ !
+

@@ -1,0 +1,155 @@
+VPWS ###########
+
+
+AMBOS TAGGED (type vlan)
+
+LADO A
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.51
+    pw-type vlan
+    !
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+    dot1q 3333
+   !
+  !
+ !
+
+LADO B
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.38
+    pw-type vlan
+    !
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+    dot1q 3333
+   !
+  !
+ !
+
+LADO A UNTAGGED, LADO B TAGGED (type vlan)
+
+LADO A
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.51
+    pw-type vlan 3333
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+   !
+  !
+ !
+
+LADO B
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.38
+    pw-type vlan
+    !
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+    dot1q 3333
+   !
+  !
+ !
+
+
+LADOS UNTAGGED E VPN TAGGED (type vlan)
+
+LADO A
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.51
+    pw-type vlan 3333
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+   !
+  !
+ !
+
+LADO B
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.38
+    pw-type vlan 3333
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+   !
+  !
+ !
+
+
+AMBOS UNTAGGED (type ethernet)
+LADO A
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.51
+    pw-type ethernet
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+   !
+  !
+
+LADO B
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   neighbor 10.127.1.38
+    pw-type ethernet
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+   !
+  !
+
+
+QINQ (type VLAN)
+
+mpls l2vpn
+ vpws-group LAB-v3333
+  vpn LAB-v3333
+   qinq
+   neighbor 10.127.1.38
+    pw-type vlan 3333
+    pw-id 3333
+    pw-mtu 9198
+   !
+   access-interface ten-gigabit-ethernet-1/1/48
+    encapsulation
+     dot1q 3332
+     untagged
+    !
+   !
+  !
