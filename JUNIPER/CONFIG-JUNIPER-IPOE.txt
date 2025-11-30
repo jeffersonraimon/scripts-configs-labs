@@ -1,0 +1,117 @@
+set system services dhcp-local-server dhcpv6 overrides delete-binding-on-renegotiation
+set system services dhcp-local-server dhcpv6 group GROUP-DHCP-v6-IPOE authentication username-include client-id
+set system services dhcp-local-server dhcpv6 group GROUP-DHCP-v6-IPOE access-profile ACCESS-RADIUS-IPOE
+set system services dhcp-local-server dhcpv6 group GROUP-DHCP-v6-IPOE overrides delegated-pool IP-POOL-PD-V6-IPOE
+set system services dhcp-local-server dhcpv6 group GROUP-DHCP-v6-IPOE overrides dual-stack dualstack
+set system services dhcp-local-server dhcpv6 group GROUP-DHCP-v6-IPOE interface ge-0/0/1.0
+set system services dhcp-local-server group GROUP-DHCP-v4-IPOE authentication username-include option-82 circuit-id
+set system services dhcp-local-server group GROUP-DHCP-v4-IPOE overrides dual-stack dualstack
+set system services dhcp-local-server group GROUP-DHCP-v4-IPOE access-profile ACCESS-RADIUS-IPOE
+set system services dhcp-local-server group GROUP-DHCP-v4-IPOE interface ge-0/0/1.0
+set system services dhcp-local-server dual-stack-group dualstack dynamic-profile IPOE-PROFILE
+set system services dhcp-local-server dual-stack-group dualstack on-demand-address-allocation
+set system services dhcp-local-server dual-stack-group dualstack classification-key mac-address
+set system services dhcp-local-server dual-stack-group dualstack protocol-master inet
+
+set interfaces ge-0/0/1 description CLIENTES
+set interfaces ge-0/0/1 flexible-vlan-tagging
+set interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile DEMUX-IPOE accept dhcp-v4
+set interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile DEMUX-IPOE accept dhcp-v6
+set interfaces ge-0/0/1 auto-configure vlan-ranges dynamic-profile DEMUX-IPOE ranges any
+set interfaces ge-0/0/1 auto-configure remove-when-no-subscribers
+
+set interfaces lo0 unit 0 family inet address 10.127.10.10/32
+set interfaces lo0 unit 0 family inet address 100.100.0.1/25
+set interfaces lo0 unit 0 family inet address 100.64.0.1/20
+set interfaces lo0 unit 0 family inet6 address fd10:127:10::10/128
+set interfaces lo0 unit 0 family inet6 address 2001:100:8900::ffff/40
+
+set firewall family inet filter in-300MB-V4 interface-specific
+set firewall family inet filter in-300MB-V4 term 1 then policer 300Mbps
+set firewall family inet filter in-300MB-V4 term 1 then accept
+set firewall family inet filter out-300MB-V4 interface-specific
+set firewall family inet filter out-300MB-V4 term 1 then policer 300Mbps
+set firewall family inet filter out-300MB-V4 term 1 then accept
+set firewall family inet6 filter in-300MB-V6 interface-specific
+set firewall family inet6 filter in-300MB-V6 term 1 then policer 300Mbps
+set firewall family inet6 filter in-300MB-V6 term 1 then accept
+set firewall family inet6 filter out-300MB-V6 interface-specific
+set firewall family inet6 filter out-300MB-V6 term 1 then policer 300Mbps
+set firewall family inet6 filter out-300MB-V6 term 1 then accept
+set firewall policer 300Mbps if-exceeding bandwidth-limit 300m
+set firewall policer 300Mbps if-exceeding burst-size-limit 2m
+set firewall policer 300Mbps then discard
+
+set access profile ACCESS-RADIUS-IPOE accounting-order radius
+set access profile ACCESS-RADIUS-IPOE authentication-order radius
+set access profile ACCESS-RADIUS-IPOE domain-name-server 100.100.1.1
+set access profile ACCESS-RADIUS-IPOE domain-name-server 100.100.1.2
+set access profile ACCESS-RADIUS-IPOE domain-name-server-inet6 2804:100:4000::1
+set access profile ACCESS-RADIUS-IPOE domain-name-server-inet6 2804:100:4000::2
+set access profile ACCESS-RADIUS-IPOE address-assignment pool IP-POOL-V4-IPOE
+set access profile ACCESS-RADIUS-IPOE radius authentication-server 10.127.200.2
+set access profile ACCESS-RADIUS-IPOE radius accounting-server 10.127.200.2
+set access profile ACCESS-RADIUS-IPOE radius options accounting-session-id-format description
+set access profile ACCESS-RADIUS-IPOE radius options client-authentication-algorithm direct
+set access profile ACCESS-RADIUS-IPOE radius-server 10.127.200.2 port 1812
+set access profile ACCESS-RADIUS-IPOE radius-server 10.127.200.2 accounting-port 1813
+set access profile ACCESS-RADIUS-IPOE radius-server 10.127.200.2 dynamic-request-port 3799
+set access profile ACCESS-RADIUS-IPOE radius-server 10.127.200.2 secret "testing123"
+set access profile ACCESS-RADIUS-IPOE accounting order radius
+set access profile ACCESS-RADIUS-IPOE accounting accounting-stop-on-failure
+set access profile ACCESS-RADIUS-IPOE accounting accounting-stop-on-access-deny
+set access profile ACCESS-RADIUS-IPOE accounting coa-immediate-update
+set access profile ACCESS-RADIUS-IPOE accounting update-interval 10
+set access profile ACCESS-RADIUS-IPOE accounting statistics volume-time
+
+set access address-assignment neighbor-discovery-router-advertisement NDRA-WAN
+set access address-assignment pool NDRA-WAN family inet6 prefix 2001:100:8800::/40
+set access address-assignment pool NDRA-WAN family inet6 range nd prefix-length 64
+set access address-assignment pool IP-POOL-PD-V6-IPOE family inet6 prefix 2001:100:8900::/40
+set access address-assignment pool IP-POOL-PD-V6-IPOE family inet6 range dhcp prefix-length 56
+set access address-assignment pool IP-POOL-V4-IPOE family inet network 100.100.0.0/25
+set access address-assignment pool IP-POOL-V4-IPOE family inet range POOL_RANGE low 100.100.0.2
+set access address-assignment pool IP-POOL-V4-IPOE family inet range POOL_RANGE high 100.100.0.126
+set access address-assignment pool IP-POOL-V4-IPOE family inet dhcp-attributes maximum-lease-time 600
+set access address-assignment pool IP-POOL-V4-IPOE family inet dhcp-attributes router 100.100.0.1
+set access address-assignment pool IP-POOL-CGNAT-IPOE family inet network 100.64.0.0/20
+set access address-assignment pool IP-POOL-CGNAT-IPOE family inet range POOL_RANGE low 100.64.0.2
+set access address-assignment pool IP-POOL-CGNAT-IPOE family inet range POOL_RANGE high 100.64.15.254
+set access address-assignment pool IP-POOL-CGNAT-IPOE family inet dhcp-attributes maximum-lease-time 600
+set access address-assignment pool IP-POOL-CGNAT-IPOE family inet dhcp-attributes router 100.64.0.1
+set routing-options rib inet6.0 static route 2001:100:8800::/40 discard
+set routing-options rib inet6.0 static route 2001:100:8900::/40 discard
+
+set dynamic-profiles IPOE-PROFILE predefined-variable-defaults input-filter default
+set dynamic-profiles IPOE-PROFILE predefined-variable-defaults output-filter default
+set dynamic-profiles IPOE-PROFILE predefined-variable-defaults output-ipv6-filter default-v6
+set dynamic-profiles IPOE-PROFILE predefined-variable-defaults input-ipv6-filter default-v6
+set dynamic-profiles IPOE-PROFILE routing-instances "$junos-routing-instance" interface "$junos-interface-name" any
+set dynamic-profiles IPOE-PROFILE routing-instances "$junos-routing-instance" routing-options rib "$junos-ipv6-rib" access route $junos-framed-route-ipv6-address-prefix qualified-next-hop "$junos-interface-name"
+set dynamic-profiles IPOE-PROFILE routing-instances "$junos-routing-instance" routing-options rib "$junos-ipv6-rib" access route $junos-framed-route-ipv6-address-prefix metric "$junos-framed-route-cost"
+set dynamic-profiles IPOE-PROFILE routing-instances "$junos-routing-instance" routing-options rib "$junos-ipv6-rib" access route $junos-framed-route-ipv6-address-prefix preference "$junos-framed-route-distance"
+set dynamic-profiles IPOE-PROFILE routing-instances "$junos-routing-instance" routing-options rib "$junos-ipv6-rib" access route $junos-framed-route-ipv6-address-prefix tag "$junos-framed-route-tag"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" proxy-arp
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-underlying-interface"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet demux-source $junos-subscriber-ip-address
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet filter input "$junos-input-filter"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet filter output "$junos-output-filter"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet6 filter input "$junos-input-ipv6-filter"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet6 filter output "$junos-output-ipv6-filter"
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet6 address $junos-ipv6-address
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet6 demux-source $junos-subscriber-ipv6-address
+set dynamic-profiles IPOE-PROFILE interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set dynamic-profiles IPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" link-mtu
+set dynamic-profiles IPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" prefix $junos-ipv6-ndra-prefix valid-lifetime 14400
+set dynamic-profiles IPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" prefix $junos-ipv6-ndra-prefix on-link
+set dynamic-profiles IPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" prefix $junos-ipv6-ndra-prefix preferred-lifetime 14400
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" actual-transit-statistics
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" demux-source inet
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" demux-source inet6
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" proxy-arp
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" vlan-id "$junos-vlan-id"
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-interface-ifd-name"
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" family inet unnumbered-address lo0.0
+set dynamic-profiles DEMUX-IPOE interfaces demux0 unit "$junos-interface-unit" family inet6 unnumbered-address lo0.0
+
