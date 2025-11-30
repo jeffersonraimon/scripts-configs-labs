@@ -1,0 +1,73 @@
+set system services dhcp-local-server dhcpv6 group DHCPv6-over-pppoe interface pp0.0
+set system services dhcp-local-server dhcpv6 group DHCPv6-over-pppoe overrides delegated-pool IP-POOL-PD-V6-PPPOE
+
+set interfaces ge-0/0/2 flexible-vlan-tagging
+set interfaces ge-0/0/2 auto-configure vlan-ranges dynamic-profile DEMUX-PPPOE accept pppoe
+set interfaces ge-0/0/2 auto-configure vlan-ranges dynamic-profile DEMUX-PPPOE ranges any
+set interfaces ge-0/0/2 auto-configure remove-when-no-subscribers
+
+set access profile ACCESS-RADIUS-PPPOE accounting-order radius
+set access profile ACCESS-RADIUS-PPPOE authentication-order radius
+set access profile ACCESS-RADIUS-PPPOE domain-name-server 100.100.1.1
+set access profile ACCESS-RADIUS-PPPOE domain-name-server 100.100.1.2
+set access profile ACCESS-RADIUS-PPPOE domain-name-server-inet6 2804:100:4000::1
+set access profile ACCESS-RADIUS-PPPOE domain-name-server-inet6 2804:100:4000::2
+set access profile ACCESS-RADIUS-PPPOE session-limit-per-username 1
+set access profile ACCESS-RADIUS-PPPOE radius authentication-server 10.127.200.2
+set access profile ACCESS-RADIUS-PPPOE radius accounting-server 10.127.200.2
+set access profile ACCESS-RADIUS-PPPOE radius options nas-port-extended-format slot-width 5
+set access profile ACCESS-RADIUS-PPPOE radius options nas-port-extended-format adapter-width 1
+set access profile ACCESS-RADIUS-PPPOE radius options nas-port-extended-format port-width 3
+set access profile ACCESS-RADIUS-PPPOE radius options calling-station-id-format mac-address
+set access profile ACCESS-RADIUS-PPPOE radius options accounting-session-id-format description
+set access profile ACCESS-RADIUS-PPPOE radius options client-authentication-algorithm direct
+set access profile ACCESS-RADIUS-PPPOE radius-server 10.127.200.2 port 1812
+set access profile ACCESS-RADIUS-PPPOE radius-server 10.127.200.2 accounting-port 1813
+set access profile ACCESS-RADIUS-PPPOE radius-server 10.127.200.2 dynamic-request-port 3799
+set access profile ACCESS-RADIUS-PPPOE radius-server 10.127.200.2 secret "testing123"
+set access profile ACCESS-RADIUS-PPPOE accounting order radius
+set access profile ACCESS-RADIUS-PPPOE accounting accounting-stop-on-failure
+set access profile ACCESS-RADIUS-PPPOE accounting accounting-stop-on-access-deny
+set access profile ACCESS-RADIUS-PPPOE accounting coa-immediate-update
+set access profile ACCESS-RADIUS-PPPOE accounting update-interval 10
+set access profile ACCESS-RADIUS-PPPOE accounting statistics volume-time
+
+set access address-assignment pool IP-POOL-PD-V6-PPPOE family inet6 prefix 2001:100:9200::/40
+set access address-assignment pool IP-POOL-PD-V6-PPPOE family inet6 range dhcp prefix-length 56
+
+set access address-assignment pool IP-POOL-V4-PPPOE family inet network 100.100.0.128/25
+set access address-assignment pool IP-POOL-CGNAT-PPPOE family inet network 100.64.32.0/20
+
+set routing-options static route 100.64.32.0/20 discard
+set routing-options rib inet6.0 static route 2001:100:9200::/40 discard
+
+set dynamic-profiles PPPOE-PROFILE predefined-variable-defaults input-filter default-in
+set dynamic-profiles PPPOE-PROFILE predefined-variable-defaults output-filter default-out
+set dynamic-profiles PPPOE-PROFILE predefined-variable-defaults input-ipv6-filter default-ipv6-in
+set dynamic-profiles PPPOE-PROFILE predefined-variable-defaults output-ipv6-filter default-ipv6-out
+set dynamic-profiles PPPOE-PROFILE routing-instances "$junos-routing-instance" interface "$junos-interface-name"
+set dynamic-profiles PPPOE-PROFILE routing-instances "$junos-routing-instance" routing-options access route $junos-framed-route-ip-address-prefix next-hop "$junos-framed-route-nexthop"
+set dynamic-profiles PPPOE-PROFILE routing-instances "$junos-routing-instance" routing-options access route $junos-framed-route-ip-address-prefix tag "$junos-framed-route-tag"
+set dynamic-profiles PPPOE-PROFILE routing-instances "$junos-routing-instance" routing-options access-internal route $junos-subscriber-ip-address qualified-next-hop "$junos-interface-name"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" actual-transit-statistics
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" no-traps
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" ppp-options chap
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" ppp-options pap
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" pppoe-options underlying-interface "$junos-underlying-interface"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" pppoe-options server
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" keepalives interval 50
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet rpf-check
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet filter input "$junos-input-filter"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet filter output "$junos-output-filter"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet unnumbered-address "$junos-loopback-interface"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet6 filter input "$junos-input-ipv6-filter"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet6 filter output "$junos-output-ipv6-filter"
+set dynamic-profiles PPPOE-PROFILE interfaces pp0 unit "$junos-interface-unit" family inet6 unnumbered-address "$junos-loopback-interface"
+set dynamic-profiles PPPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" link-mtu
+set dynamic-profiles PPPOE-PROFILE protocols router-advertisement interface "$junos-interface-name" prefix $junos-ipv6-ndra-prefix
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" vlan-id "$junos-vlan-id"
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" demux-options underlying-interface "$junos-interface-ifd-name"
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" family pppoe access-concentrator mx204
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" family pppoe duplicate-protection
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" family pppoe dynamic-profile PPPOE-PROFILE
+set dynamic-profiles DEMUX-PPPOE interfaces demux0 unit "$junos-interface-unit" family pppoe max-sessions 32000
