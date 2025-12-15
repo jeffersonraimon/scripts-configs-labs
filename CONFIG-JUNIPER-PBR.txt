@@ -1,0 +1,6 @@
+set firewall family inet filter PBR-CLIENTE term 1 from source-address 100.100.100.0/24
+set firewall family inet filter PBR-CLIENTE term 1 then next-ip 10.1.25.2
+set firewall family inet filter PBR-CLIENTE term 2 then accept
+
+set interfaces ge-0/0/2 unit 0 family inet filter input PBR-CLIENTE
+set interfaces ge-0/0/2 unit 0 description CLIENTE
