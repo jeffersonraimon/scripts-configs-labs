@@ -65,7 +65,7 @@ VLAN UNTAGGED
 interface GigabitEthernet2
  service instance 1 ethernet
   encapsulation default
-  rewrite ingress tag push dot1q 10
+  rewrite ingress tag push dot1q 10 symmetric
   bridge-domain 10
  !
 
