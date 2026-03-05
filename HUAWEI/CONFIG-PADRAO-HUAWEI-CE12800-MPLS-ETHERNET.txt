@@ -1,0 +1,51 @@
+sysname SW3
+#
+bfd
+#
+mpls lsr-id 10.3.3.3
+#
+mpls
+ mpls te
+ mpls rsvp-te
+ mpls rsvp-te bfd all-interfaces enable
+#
+mpls l2vpn
+#
+mpls ldp
+ #
+ ipv4-family
+#
+ospfv3 1
+ router-id 10.3.3.3
+ bfd all-interfaces enable
+ area 0.0.0.0
+#
+ospf 1 router-id 10.3.3.3
+ bfd all-interfaces enable
+ opaque-capability enable
+ area 0.0.0.0
+  mpls-te enable
+#
+interface LoopBack0
+ ipv6 enable
+ ip address 10.3.3.3 255.255.255.255
+ ipv6 address FD10:3:3::3/128
+ ospfv3 1 area 0.0.0.0
+ ospf enable 1 area 0.0.0.0
+#
+interface GE 1/0/0
+ undo portswitch
+ undo shutdown
+ ipv6 enable
+ ip address 10.0.0.2 255.255.255.252
+ ipv6 address auto link-local
+ ospfv3 1 area 0.0.0.0
+ ospfv3 network-type p2p
+ ospf network-type p2p
+ ospf enable 1 area 0.0.0.0
+ mpls
+ mpls mtu 1500
+ mpls te
+ mpls rsvp-te
+ mpls ldp
+#
